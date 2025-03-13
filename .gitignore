@@ -1,0 +1,56 @@
+# Local testing files
+run.sh
+
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution/Packaging
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+MANIFEST
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv/
+env.bak/
+venv.bak/
+
+# Testing
+.coverage
+*.cover
+nosetests.xml
+coverage.xml
+*.hypothesis/
+
+# Pytest
+.pytest_cache/
+
+# VSCode
+.vscode/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Python-specific
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+.PyCharm/
+.idea/
+
+# MyPy
+.mypy_cache/
+
+# System Files
+*.swp
+*.swo
