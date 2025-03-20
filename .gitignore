@@ -1,5 +1,7 @@
-# Local testing files
+# Project specific
 run.sh
+logs/*
+data/*
 
 # Byte-compiled files
 __pycache__/

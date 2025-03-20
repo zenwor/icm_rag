@@ -21,3 +21,7 @@ if [[ -f "requirements.txt" ]]; then
 else
     echo "requirements.txt not found. Skipping installation."
 fi
+
+# General environment variables
+export PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export DOTENV_PATH="$PROJECT_ROOT/.env.example"
