@@ -1,0 +1,3 @@
+[flake8]
+exclude =
+    icm_rag/rag/fixed_token_chunker.py
