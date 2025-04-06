@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from eval import Evaluation
 from retrieve import FixedTokenChunker, Retriever
 from sentence_transformers import SentenceTransformer
 from utils import log_info  # noqa: F401
@@ -33,30 +34,24 @@ if __name__ == "__main__":
         dataset=args.dataset,
         force_download=False,
     )
+    content = parse_txt(file_path)
 
     questions_df = load_df(args.questions_df_path)
     questions_df = preprocess_df(questions_df, dataset=args.dataset)
     questions_df_filepath = Path(args.dataset_dir) / Path("questions_df.csv")
     questions_df.to_csv(questions_df_filepath, index=False)
 
-    content = parse_txt(file_path)
-
     chunker = FixedTokenChunker(
         chunk_size=args.chunk_size,
         chunk_overlap=args.chunk_overlap,
     )
     emb_model = SentenceTransformer(args.emb_model)
+
     ret = Retriever(chunker, emb_model)
+    ret.from_document(content)
 
-    chunks = ret.chunk(content)
-    embs = ret.embed(chunks)
-    ret.add_chunks(chunks)
+    eval = Evaluation(ret, questions_df)
+    res = eval(["recall", "precision"])
 
-    # Temporary example
-    qry = questions_df.iloc[0]["question"]
-    ret_ch = ret.query(qry)
-
-    print(qry)
-    for idx, ch in enumerate(ret_ch):
-        print(idx, ch)
-        print("")
+    print(f"Recall: {res['recall'] * 100:.2f}")
+    print(f"Precision: {res['precision'] * 100:.2f}")
