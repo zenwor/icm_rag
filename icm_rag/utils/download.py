@@ -25,7 +25,7 @@ def download(
     local_path = local_dir / file_name
 
     if os.path.exists(local_path) and not force_download:
-        return
+        return local_path
 
     log_info("Downloading from url: " + url)
     response = requests.get(url)
@@ -34,5 +34,7 @@ def download(
         with open(local_path, "wb") as file:
             file.write(response.content)
         log_info("Download complete.")
+        return local_path
     else:
         log_error(f"Failed to download file: {response.status_code}")
+        return None
