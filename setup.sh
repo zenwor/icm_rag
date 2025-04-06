@@ -21,6 +21,7 @@ conda activate "$CONDA_ENV_NAME"
 # General environment variables
 export PROJECT_ROOT=$PWD
 export SRC_ROOT="${PROJECT_ROOT}/${PROJECT_NAME}/"
-export DOTENV_PATH="$PROJECT_ROOT/.env.example"
+export DOTENV_PATH="${PROJECT_ROOT}/.env.example"
+export EXPERIMENTS_DIR="${SRC_ROOT}/experiments/"
 
 export PYTHONPATH=$SRC_ROOT
