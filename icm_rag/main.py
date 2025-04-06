@@ -5,6 +5,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from retrieve import FixedTokenChunker, Retriever
+from sentence_transformers import SentenceTransformer
+from utils import log_info  # noqa: F401
 from utils import parse_args  # noqa: E501
 from utils import (
     download,
@@ -43,8 +45,18 @@ if __name__ == "__main__":
         chunk_size=args.chunk_size,
         chunk_overlap=args.chunk_overlap,
     )
-    ret = Retriever(chunker)
+    emb_model = SentenceTransformer(args.emb_model)
+    ret = Retriever(chunker, emb_model)
 
     chunks = ret.chunk(content)
-    for idx, chunk in enumerate(chunks):
-        print(idx, chunk)
+    embs = ret.embed(chunks)
+    ret.add_chunks(chunks)
+
+    # Temporary example
+    qry = questions_df.iloc[0]["question"]
+    ret_ch = ret.query(qry)
+
+    print(qry)
+    for idx, ch in enumerate(ret_ch):
+        print(idx, ch)
+        print("")

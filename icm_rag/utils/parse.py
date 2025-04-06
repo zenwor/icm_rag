@@ -63,6 +63,23 @@ def parse_args():
         default=40,
         help="Chunk overlap to use for document chunking.",
     )
+
+    parser.add_argument(
+        "--emb_model",
+        type=str,
+        default="sentence-transformers/all-MiniLM-L6-v2",
+        choices=[
+            "sentence-transformers/all-MiniLM-L6-v2",
+            "sentence-transformers/multi-qa-mpnet-base-dot-v1",
+        ],
+        help="Chunk embedding model.",
+    )
+    parser.add_argument(
+        "--batch_size",
+        type=int,
+        default=16,
+        help="Batch size for chunk embedding.",
+    )
     parser.add_argument(
         "--k", type=int, default=10, help="Retrieve top-k chunks."
     )  # noqa: E501
