@@ -66,6 +66,7 @@ if __name__ == "__main__":
         "chunker": str(chunker),
         "chunk_size": args.chunk_size,
         "chunk_overlap": args.chunk_overlap,
+        "ret_type": args.ret_type,
         "k": args.k,
     }
 

@@ -89,7 +89,6 @@ def parse_args():
         default=40,
         help="Chunk overlap to use for document chunking.",
     )
-
     parser.add_argument(
         "--emb_model",
         type=str,

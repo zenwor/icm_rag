@@ -8,6 +8,7 @@ cd $SRC_ROOT
     --cache_dir "$SRC_ROOT/data/cache" \
     --chunk_size 800 \
     --chunk_overlap 400 \
+    --ret_type "chromadb" \
     --emb_model sentence-transformers/all-MiniLM-L6-v2 \
     --k 10 \
     --log "$EXPERIMENTS_DIR/experiments.csv" \

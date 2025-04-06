@@ -1,6 +1,7 @@
 import re
 from typing import Dict, List, Union
 
+import chromadb
 import numpy as np
 import torch
 from fuzzywuzzy import fuzz, process
@@ -55,7 +56,7 @@ class Retriever:
         Returns:
             List[str]: List of chunks.
         """
-        return []
+        return self.chunker.split_text(text)
 
     def embed(self, chunks: Union[str, List[str]], batch_size: int = 1) -> torch.Tensor:
         """
@@ -72,7 +73,18 @@ class Retriever:
                 If multiple chunks, will return the embedding in the shape of
                 (num_chunks, embedding_size).
         """
-        return None
+        embs = (
+            self.emb_model.encode(
+                chunks,
+                batch_size=batch_size,
+                convert_to_tensor=True,
+                show_progress_bar=False,
+            )  # noqa: E501
+            .detach()
+            .cpu()
+        )
+
+        return embs
 
     def query(self, query: str, k: int = 10) -> List[dict]:
         """
@@ -175,9 +187,91 @@ class Retriever:
 
 class ChromaDBRetriever(Retriever):
     """
-    This class contains implementation of standard ChromaDB, as vector store,
-    for retrieval purposes.
+    This class implements a retriever using ChromaDB as backend.
+    Stores and queries chunks via a persistent or in-memory vector DB.
     """
+
+    def __init__(self, chunker, emb_model, collection_name: str = "example_collection"):
+        self.chunker = chunker
+        self.emb_model = emb_model
+        self.client = chromadb.Client()
+        self.collection = self.client.get_or_create_collection(name=collection_name)
+        self.chunk_id_map: Dict[int, str] = (
+            {}
+        )  # Maps index to document ID in collection
+
+    def __getitem__(self, idx: int):
+        """
+        Retrieve document by index (uses chunk_id_map for look-up).
+        """
+        if idx not in self.chunk_id_map:
+            return None
+
+        result = self.collection.get(
+            ids=[self.chunk_id_map[idx]],
+            include=["documents", "embeddings", "metadatas"],
+        )
+
+        return {
+            "chunk": result["documents"][0],
+            "emb": torch.tensor(result["embeddings"][0]),
+            "metadata": result["metadatas"][0],
+        }
+
+    def __iter__(self):
+        for i in range(len(self.chunk_id_map)):
+            yield self.__getitem__(i)
+
+    def chunk(self, text: str) -> List[str]:
+        return super().chunk(text)
+
+    def embed(self, chunks: Union[str, List[str]], batch_size: int = 1) -> torch.Tensor:
+        return super().embed(chunks, batch_size)
+
+    def add_chunks(self, chunks: List[str], metadata: List[dict] = []):
+        embs = self.embed(chunks).tolist()
+        ids = [f"chunk_{i}" for i in range(len(chunks))]
+
+        # Save mapping
+        for i, _id in enumerate(ids):
+            self.chunk_id_map[i] = _id
+
+        # Add to collection
+        self.collection.add(
+            ids=ids,
+            documents=chunks,
+            embeddings=embs,
+            metadatas=metadata if metadata else [{} for _ in chunks],
+        )
+
+    def from_document(self, content: str, add_metadata: bool = True):
+        chunks = self.chunk(content)
+
+        metadata = []
+        if add_metadata:
+            for chunk in chunks:
+                chunk_metadata = self._make_metadata_for_chunk(chunk, content)
+                metadata.append(chunk_metadata)
+
+        self.add_chunks(chunks, metadata)
+
+    def query(self, query: str, k: int = 10):
+        query_emb = self.embed(query).squeeze().tolist()
+
+        results = self.collection.query(
+            query_embeddings=[query_emb],
+            n_results=k,
+            include=["documents", "metadatas", "embeddings"],
+        )
+
+        return [
+            {
+                "chunk": results["documents"][0][i],
+                "emb": torch.tensor(results["embeddings"][0][i]),
+                "metadata": results["metadatas"][0][i],
+            }
+            for i in range(len(results["documents"][0]))
+        ]
 
 
 class CosSimRetriever(Retriever):
@@ -225,23 +319,12 @@ class CosSimRetriever(Retriever):
             yield self.__getitem__(idx)
 
     def chunk(self, text: str) -> List[str]:
-        return self.chunker.split_text(text)
+        return super().chunk(text)
 
     def embed(
         self, chunks: Union[str, List[str]], batch_size: int = 1
     ) -> torch.Tensor:  # noqa: E501
-        embs = (
-            self.emb_model.encode(
-                chunks,
-                batch_size=batch_size,
-                convert_to_tensor=True,
-                show_progress_bar=False,
-            )  # noqa: E501
-            .detach()
-            .cpu()
-        )
-
-        return embs
+        return super().embed(chunks, batch_size)
 
     def add_chunks(
         self, chunks: Union[str, List[str]], metadata: List[dict] = []
