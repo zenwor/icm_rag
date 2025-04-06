@@ -2,6 +2,15 @@ import argparse
 import os
 
 
+def parse_txt(file_path: str):
+    """
+    Read the textual content of a file.
+    """
+    with open(file_path, "r", encoding="utf-8") as file:
+        content = file.read()
+    return content
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
 
@@ -41,5 +50,38 @@ def parse_args():
         help="Path to log file.",
         default=None,
     )
+
+    parser.add_argument(
+        "--chunk_size",
+        type=int,
+        default=400,
+        help="Chunk size to use for document chunking.",
+    )
+    parser.add_argument(
+        "--chunk_overlap",
+        type=int,
+        default=40,
+        help="Chunk overlap to use for document chunking.",
+    )
+
+    parser.add_argument(
+        "--emb_model",
+        type=str,
+        default="sentence-transformers/all-MiniLM-L6-v2",
+        choices=[
+            "sentence-transformers/all-MiniLM-L6-v2",
+            "sentence-transformers/multi-qa-mpnet-base-dot-v1",
+        ],
+        help="Chunk embedding model.",
+    )
+    parser.add_argument(
+        "--batch_size",
+        type=int,
+        default=16,
+        help="Batch size for chunk embedding.",
+    )
+    parser.add_argument(
+        "--k", type=int, default=10, help="Retrieve top-k chunks."
+    )  # noqa: E501
 
     return parser.parse_args()

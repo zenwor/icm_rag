@@ -6,6 +6,7 @@
 # License: MIT License
 
 # mypy: disable-error-code="call-arg"
+# flake8: noqa
 
 import logging
 from abc import ABC, abstractmethod
