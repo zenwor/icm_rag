@@ -1,5 +1,7 @@
 # This script is being used as a part of JetBrains Internship Application Test Task.
-# As such, it has not been modified. All the credits go to the authors.
+# As such, it has only been modified for logging purposes,
+# i.e. __str__(self) is implemented.
+# All the credits go to the authors.
 
 # This script is adapted from the LangChain package, developed by LangChain AI.
 # Original code can be found at: https://github.com/langchain-ai/langchain/blob/master/libs/text-splitters/langchain_text_splitters/base.py
@@ -239,6 +241,9 @@ class FixedTokenChunker(TextSplitter):
         )
 
         return split_text_on_tokens(text=text, tokenizer=tokenizer)
+
+    def __str__(self):
+        return f"FixedTokenChunker"
 
 
 @dataclass(frozen=True)

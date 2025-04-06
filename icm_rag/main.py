@@ -7,15 +7,15 @@ from dotenv import load_dotenv
 from eval import Evaluation
 from retrieve import FixedTokenChunker, Retriever
 from sentence_transformers import SentenceTransformer
-from utils import log_info  # noqa: F401
 from utils import parse_args  # noqa: E501
-from utils import (
+from utils import (  # noqa: F401
     download,
     load_df,
+    log_experiment,
+    log_info,
     make_path,
     parse_txt,
     preprocess_df,
-    set_log_file,
 )
 
 load_dotenv(os.getenv("DOTENV_PATH"))
@@ -23,8 +23,6 @@ load_dotenv(os.getenv("DOTENV_PATH"))
 
 if __name__ == "__main__":
     args = parse_args()
-
-    set_log_file(args.log)
 
     # Download and prepare dataset
     args.dataset_dir = make_path(args.dataset_dir)
@@ -55,3 +53,13 @@ if __name__ == "__main__":
 
     print(f"Recall: {res['recall'] * 100:.2f}")
     print(f"Precision: {res['precision'] * 100:.2f}")
+
+    setup = {
+        "exp_name": args.exp_name,
+        "chunker": str(chunker),
+        "chunk_size": args.chunk_size,
+        "chunk_overlap": args.chunk_overlap,
+        "k": args.k,
+    }
+
+    log_experiment(setup, res, log_path=make_path(args.log))

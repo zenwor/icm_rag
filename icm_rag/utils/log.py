@@ -1,5 +1,7 @@
+import csv
 import logging
 import sys
+from pathlib import Path
 
 general_format = "%(levelname)s - %(filename)s (%(funcName)s): %(message)s"
 logging.basicConfig(level=logging.INFO, format=general_format)
@@ -47,3 +49,18 @@ def log_debug(msg):
 def log_critical(msg):
     if log_enabled:
         logging.critical(msg)
+
+
+def log_experiment(setup: dict, res: dict, log_path: Path):
+    entry = [
+        setup["chunker"],
+        setup["chunk_size"],
+        setup["chunk_overlap"],
+        setup["k"],
+        res.get("recall", "N/A"),
+        res.get("precision", "N/A"),
+    ]
+
+    with open(log_path, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(entry)

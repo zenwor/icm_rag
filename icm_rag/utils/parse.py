@@ -15,6 +15,13 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
+        "--exp_name",
+        type=str,
+        default="default_experiment",
+        help="Name of the experiment run with the given parameters.",
+    )
+
+    parser.add_argument(
         "--questions_df_path",
         type=str,
         help="Path to questions DataFrame.",
