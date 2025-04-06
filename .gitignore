@@ -1,7 +1,7 @@
 # Project specific
-run.sh
-logs/*
-data/*
+icm_rag/run.sh
+icm_rag/logs/*
+icm_rag/data/*
 
 # Byte-compiled files
 __pycache__/
