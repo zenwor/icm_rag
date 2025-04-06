@@ -1,10 +1,19 @@
 import argparse
 import os
+from pathlib import Path
+from typing import Union
 
 
-def parse_txt(file_path: str):
+def parse_txt(file_path: Union[Path, str]) -> str:
     """
     Read the textual content of a file.
+    Aimed to be used for document content parsing (.md format).
+
+    Args:
+        file_path (Union[Path, str]): Path to txt-parsable file.
+
+    Returns:
+        content (str): Parsed textual content, in UTF-8 encoding.
     """
     with open(file_path, "r", encoding="utf-8") as file:
         content = file.read()
@@ -12,6 +21,9 @@ def parse_txt(file_path: str):
 
 
 def parse_args():
+    """
+    Parse command-line arguments.
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -58,6 +70,13 @@ def parse_args():
         default=None,
     )
 
+    parser.add_argument(
+        "--ret_type",
+        type=str,
+        choices=["cos_sim", "chromadb"],
+        help="Type of vector database to use.",
+        default="cos_sim",
+    )
     parser.add_argument(
         "--chunk_size",
         type=int,

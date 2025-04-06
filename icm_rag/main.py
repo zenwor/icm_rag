@@ -32,6 +32,9 @@ if __name__ == "__main__":
         dataset=args.dataset,
         force_download=False,
     )
+    if file_path is None:
+        raise ValueError("Download method returned None.")
+
     content = parse_txt(file_path)
 
     questions_df = load_df(args.questions_df_path)
@@ -45,7 +48,11 @@ if __name__ == "__main__":
     )
     emb_model = SentenceTransformer(args.emb_model)
 
-    ret = Retriever(chunker, emb_model)
+    ret = Retriever.from_kwargs(
+        type=args.ret_type,
+        chunker=chunker,
+        emb_model=emb_model,
+    )
     ret.from_document(content)
 
     eval = Evaluation(ret, questions_df)

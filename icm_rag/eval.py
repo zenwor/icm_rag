@@ -1,22 +1,72 @@
 import json
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import pandas as pd
 from retrieve import Retriever
 
 
 class Evaluation:
+    """
+    This class contains implementation of evaluation framework.
+    It is given a fully set-up retriever and questions DataFrame, and contains
+    all the relevant methods for implementing metrics such as Recall and
+    Precision.
+    """
+
     def __init__(self, ret: Retriever, questions_df: pd.DataFrame):
         self.ret = ret
         self.questions_df = questions_df
 
-    def __call__(self, metrics):
+    def __call__(self, metrics) -> dict:
+        """
+        Call `self.eval(self, metrics)`. Implemented for code brevity.
+
+        Args:
+            metrics (List[str]): List of metrics to evaluate on (and return).
+
+        Returns:
+            dict: Dictionary of experiment results, with given metrics.
+        """
         return self.eval(metrics)
 
-    def _parse_references(self, references: str):
+    def _parse_references(self, references: str) -> List[dict]:
+        """
+        Parse JSON-formatted references in questions_df["references"] column.
+
+        Args:
+            references (str): Unparsed cell value in "references" column.
+
+        Returns:
+            List[dict]: Parsed references, with each containing:
+                (1) chunk (str): Textual content of the chunk.
+                (2) start_index (int): Starting index of the chunk.
+                (3) end_index (int): Ending index of the chunk.
+        """
         return json.loads(references)
 
-    def _intersection(self, range1: Tuple[int, int], range2: Tuple[int, int]):
+    def _intersection(
+        self, range1: Tuple[int, int], range2: Tuple[int, int]
+    ) -> Union[Tuple[int, int], None]:
+        """
+        Calculate intersection of two ranges.
+        Implement standard intersection checking, where:
+            (1) Starting index of intersection is the higher one, between the
+                starting indices.
+            (2) Ending index of intersection is the lower one, between the
+                ending indices.
+        Check if intersection start and end make sense (i.e. start <= end),
+        and return it as a new range.
+        Otherwise, return None.
+
+        Args:
+            range1 (Tuple[int, int]): Range information in format (start, end).
+            range2 (Tuple[int, int]): Range information in format (start, end).
+
+        Returns:
+            Union[Tuple[int, int], None]: If intersection is existent, return
+                its start and end index.
+                Otherwise, return None.
+        """
         start_1, end_1 = range1
         start_2, end_2 = range2
 
@@ -32,6 +82,12 @@ class Evaluation:
         """
         Merge overlapping or contiguous ranges
         and return a list of non-overlapping intervals.
+
+        Args:
+            ranges (List[Tuple[int, int]]): List of ranges in format (start, end).
+
+        Returns:
+            merged (Tuple[int, int]): Merged range.
         """
         if not ranges:
             return []
@@ -54,10 +110,26 @@ class Evaluation:
     def _sum_of_ranges(self, ranges):
         """
         Sum lengths of a list of (start, end) intervals.
+
+        Args:
+            ranges (List[Tuple[int, int]]): List of ranges in format (start, end)
+
+        Returns:
+            int: Sum of lengths of each range.
         """
         return sum(end - start for start, end in ranges)
 
     def eval(self, metrics: List[str] = []):
+        """
+        Evaluate the experiment.
+        Calculate each metric and add to return value only requested-upon ones.
+
+        Args:
+            metrics (List[str]): List of metrics to return.
+
+        Returns:
+            dict: Experiment results.
+        """
         recall_scores = []
         precision_scores = []
 
@@ -109,6 +181,7 @@ class Evaluation:
             sum(precision_scores) / len(precision_scores) if precision_scores else 0
         )
 
+        # Create dictionary of evaluation results
         eval_res = {}
         if "recall" in metrics:
             eval_res["recall"] = avg_recall
