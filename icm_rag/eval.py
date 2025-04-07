@@ -4,6 +4,8 @@ from typing import List, Tuple, Union
 import numpy as np
 import pandas as pd
 from retrieve import Retriever
+from tqdm import tqdm
+from utils.log import log_done, log_ongoing
 
 
 class Evaluation:
@@ -131,10 +133,11 @@ class Evaluation:
         Returns:
             dict: Experiment results.
         """
+        log_ongoing("Starting evaluation process...")
         recall_scores = []
         precision_scores = []
 
-        for idx, entry in self.questions_df.iterrows():
+        for idx, entry in tqdm(self.questions_df.iterrows()):
             question = entry["question"]
             ref_chunks = self._parse_references(entry["references"])
             ret_chunks = self.ret.query(question)
@@ -194,4 +197,5 @@ class Evaluation:
             eval_res["precision_std"] = float(np.std(precision_scores))
             eval_res["precision_scores"] = precision_scores
 
+        log_done("Successfully finished evaluation!")
         return eval_res

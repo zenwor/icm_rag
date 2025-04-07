@@ -3,7 +3,7 @@ import logging
 import sys
 from pathlib import Path
 
-general_format = "%(levelname)s - %(filename)s (%(funcName)s): %(message)s"
+general_format = "%(message)s"
 logging.basicConfig(level=logging.INFO, format=general_format)
 
 log_enabled = True
@@ -45,28 +45,38 @@ def set_log_file(log_file: str) -> None:
 
 def log_info(msg) -> None:
     if log_enabled:
-        logging.info(msg)
+        logging.info(f"ℹ️ {msg}")
+
+
+def log_ongoing(msg) -> None:
+    if log_enabled:
+        logging.info(f"⏳ {msg}")
+
+
+def log_done(msg) -> None:
+    if log_enabled:
+        logging.info(f"✅ {msg}")
 
 
 def log_warning(msg) -> None:
     if log_enabled:
-        logging.warning(msg)
+        logging.warning(f"⚠️ {msg}")
 
 
 def log_error(msg) -> None:
     if log_enabled:
-        logging.error(msg)
+        logging.error(f"❌ {msg}")
         sys.exit("")
 
 
 def log_debug(msg) -> None:
     if log_enabled:
-        logging.debug(msg)
+        logging.debug(f"🐛 {msg}")
 
 
 def log_critical(msg) -> None:
     if log_enabled:
-        logging.critical(msg)
+        logging.critical("‼️{msg}")
 
 
 def log_experiment(setup: dict, res: dict, log_path: Path) -> None:
@@ -83,6 +93,7 @@ def log_experiment(setup: dict, res: dict, log_path: Path) -> None:
     Returns:
         None
     """
+    log_ongoing("Logging experiment...")
     # Build the entry, in order
     entry = [
         setup["exp_name"],
@@ -102,3 +113,4 @@ def log_experiment(setup: dict, res: dict, log_path: Path) -> None:
     with open(log_path, mode="a", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(entry)
+        log_done("Successfully logged experiment!")

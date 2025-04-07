@@ -43,12 +43,14 @@ if __name__ == "__main__":
     questions_df_filepath = Path(args.dataset_dir) / Path("questions_df.csv")
     questions_df.to_csv(questions_df_filepath, index=False)
 
+    # Set up chunker and embedding model
     chunker = FixedTokenChunker(
         chunk_size=args.chunk_size,
         chunk_overlap=args.chunk_overlap,
     )
     emb_model = SentenceTransformer(args.emb_model)
 
+    # Create Retriever
     ret = Retriever.from_kwargs(
         type=args.ret_type,
         chunker=chunker,
@@ -56,11 +58,12 @@ if __name__ == "__main__":
     )
     ret.from_document(content)
 
+    # Set up evaluation framework
     eval = Evaluation(ret, questions_df)
     res = eval(["recall", "precision"])
 
-    print(f"Recall: {res['recall'] * 100:.2f} +- {res['recall_std'] * 100:.2f}")
-    print(
+    log_info(f"Recall: {res['recall'] * 100:.2f} +- {res['recall_std'] * 100:.2f}")
+    log_info(
         f"Precision: {res['precision'] * 100:.2f} +- {res['precision_std'] * 100:.2f}"
     )
 

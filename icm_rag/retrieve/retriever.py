@@ -6,12 +6,16 @@ import numpy as np
 import torch
 from fuzzywuzzy import fuzz, process
 from sklearn.metrics.pairwise import cosine_similarity
+from tqdm import tqdm
+from utils.log import log_done, log_ongoing
 
 
 class Retriever:
     def __init__(self, chunker, emb_model):
         self.chunker = chunker
         self.emb_model = emb_model
+
+        log_done(f"Successfully set-up retriever!")
 
     @staticmethod
     def from_kwargs(**kwargs):
@@ -249,10 +253,11 @@ class ChromaDBRetriever(Retriever):
 
         metadata = []
         if add_metadata:
-            for chunk in chunks:
+            log_ongoing("Generating chunks metadata...")
+            for chunk in tqdm(chunks):
                 chunk_metadata = self._make_metadata_for_chunk(chunk, content)
                 metadata.append(chunk_metadata)
-
+            log_done("Successfully generated chunks metadata")
         self.add_chunks(chunks, metadata)
 
     def query(self, query: str, k: int = 10):

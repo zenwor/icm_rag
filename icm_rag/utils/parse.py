@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 from typing import Union
 
+from utils.log import log_done, log_ongoing
+
 
 def parse_txt(file_path: Union[Path, str]) -> str:
     """
@@ -15,8 +17,10 @@ def parse_txt(file_path: Union[Path, str]) -> str:
     Returns:
         content (str): Parsed textual content, in UTF-8 encoding.
     """
+    log_ongoing(f"Reading the content of file: {file_path}...")
     with open(file_path, "r", encoding="utf-8") as file:
         content = file.read()
+    log_done("Successfully loaded file contents.")
     return content
 
 

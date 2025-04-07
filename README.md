@@ -18,7 +18,7 @@ Originally implemented as a part of JetBrains Internship Application Test Task.
 | dataset | Name of the dataset to use. |  `wikitexts`, `chatlogs`, `state_of_the_union` | (.env) `DEFAULT__QUESTIONS_DF_PATH` |
 | cache_dir | Path to caching directory. | | (.env) `DEFAULT_CACHE_DIR` |
 | data_dir | Path to data directory. | | (.env) `DEFAULT__DATA_DIR` |
-| dataset | Path to dataset directory. | | (.env) `DEFAULT_DATASET_DIR` |
+| dataset_dir | Path to dataset directory. | | (.env) `DEFAULT_DATASET_DIR` |
 | log | Path to (experiment) log file. | | None |
 | ret_type | Type of retriever to use. | `cos_sim`, `chromadb` | `chromadb` |
 | chunk_size | Chunk size to use for document chunking | `int` | 400 |

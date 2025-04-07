@@ -7,13 +7,14 @@ import warnings
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from utils.log import log_info
 from utils.path import expand_path
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 def recall_vs_precision(key: str, key2: str = None, path: str = "", save_to: str = ""):
-    print(f"Generating recall vs precision plot for key {key} and key2 {key2}")
+    log_info(f"Generating recall vs precision plot for key {key} and key2 {key2}")
 
     df = pd.read_csv(path)
 
@@ -116,7 +117,7 @@ def recall_vs_precision(key: str, key2: str = None, path: str = "", save_to: str
     plt.tight_layout()
 
     if save_to:
-        print(f"Saving figure to: {save_to}")
+        log_info(f"Saving figure to: {save_to}")
         plt.savefig(save_to, dpi=300)
     else:
         plt.show()

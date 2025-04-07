@@ -1,4 +1,5 @@
 import pandas as pd
+from utils.log import log_done, log_ongoing
 
 
 def load_df(df_path: str) -> pd.DataFrame:
@@ -11,7 +12,11 @@ def load_df(df_path: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Downloaded CSV file, wrapped into DataFrame object.
     """
-    return pd.read_csv(df_path)
+    log_ongoing(f"Loading CSV at: {df_path}")
+    df = pd.read_csv(df_path)
+    log_done(f"Successfully loaded DataFrame!")
+
+    return df
 
 
 def preprocess_df(df: pd.DataFrame, dataset: str) -> pd.DataFrame:
@@ -27,6 +32,8 @@ def preprocess_df(df: pd.DataFrame, dataset: str) -> pd.DataFrame:
     Returns:
         df (pd.DataFrame): Preprocessed DataFrame.
     """
+    log_ongoing(f"Preprocessing DataFrame...")
     df = df[df["corpus_id"] == dataset]
+    log_done(f"Successfully preprocessed DataFrame!")
 
     return df
