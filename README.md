@@ -54,3 +54,11 @@ You may find experiment examples in the [experiments directory](./icm_rag/experi
     --log "$EXPERIMENTS_DIR/wikitexts/experiments.csv" \
     --k 12
 ```
+
+## 📝 Documentation
+To build the documentation, it is enough to run the `setup.sh` and the `build_docs.sh`:
+```bash
+source ./setup.sh
+./build_docs.sh
+```
+By default, the `build_docs.sh` will open the `docs/build/index.html` using Firefox.
