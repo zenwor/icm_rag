@@ -1,6 +1,7 @@
 import json
 from typing import List, Tuple, Union
 
+import numpy as np
 import pandas as pd
 from retrieve import Retriever
 
@@ -185,10 +186,12 @@ class Evaluation:
         eval_res = {}
         if "recall" in metrics:
             eval_res["recall"] = avg_recall
+            eval_res["recall_std"] = float(np.std(recall_scores))
             eval_res["recall_scores"] = recall_scores
 
         if "precision" in metrics:
             eval_res["precision"] = avg_precision
+            eval_res["precision_std"] = float(np.std(precision_scores))
             eval_res["precision_scores"] = precision_scores
 
         return eval_res

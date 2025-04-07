@@ -10,6 +10,7 @@ from sentence_transformers import SentenceTransformer
 from utils import parse_args  # noqa: E501
 from utils import (  # noqa: F401
     download,
+    expand_path,
     load_df,
     log_experiment,
     log_info,
@@ -58,11 +59,14 @@ if __name__ == "__main__":
     eval = Evaluation(ret, questions_df)
     res = eval(["recall", "precision"])
 
-    print(f"Recall: {res['recall'] * 100:.2f}")
-    print(f"Precision: {res['precision'] * 100:.2f}")
+    print(f"Recall: {res['recall'] * 100:.2f} +- {res['recall_std'] * 100:.2f}")
+    print(
+        f"Precision: {res['precision'] * 100:.2f} +- {res['precision_std'] * 100:.2f}"
+    )
 
     setup = {
         "exp_name": args.exp_name,
+        "dataset": args.dataset,
         "chunker": str(chunker),
         "chunk_size": args.chunk_size,
         "chunk_overlap": args.chunk_overlap,
@@ -70,4 +74,4 @@ if __name__ == "__main__":
         "k": args.k,
     }
 
-    log_experiment(setup, res, log_path=make_path(args.log))
+    log_experiment(setup, res, log_path=expand_path(args.log))
