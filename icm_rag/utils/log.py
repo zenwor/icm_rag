@@ -86,13 +86,16 @@ def log_experiment(setup: dict, res: dict, log_path: Path) -> None:
     # Build the entry, in order
     entry = [
         setup["exp_name"],
+        setup["dataset"],
         setup["chunker"],
         setup["chunk_size"],
         setup["chunk_overlap"],
         setup["ret_type"],
         setup["k"],
         res.get("recall", "N/A"),
+        res.get("recall_std", "N/A"),
         res.get("precision", "N/A"),
+        res.get("precision_std", "N/A"),
     ]
 
     # Log file in the CSV Format
