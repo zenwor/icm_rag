@@ -75,7 +75,7 @@ def parse_args():
         type=str,
         choices=["cos_sim", "chromadb"],
         help="Type of vector database to use.",
-        default="cos_sim",
+        default="chromadb",
     )
     parser.add_argument(
         "--chunk_size",
