@@ -4,7 +4,7 @@ clear -x
 cd $SRC_ROOT
 ./main.py \
     --exp_name "exp_1" \
-    --dataset "satte_of_the_union" \
+    --dataset "state_of_the_union" \
     --cache_dir "$SRC_ROOT/data/cache" \
     --chunk_size 800 \
     --chunk_overlap 400 \

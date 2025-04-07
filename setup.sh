@@ -23,5 +23,6 @@ export PROJECT_ROOT=$PWD
 export SRC_ROOT="${PROJECT_ROOT}/${PROJECT_NAME}/"
 export DOTENV_PATH="${PROJECT_ROOT}/.env.example"
 export EXPERIMENTS_DIR="${SRC_ROOT}/experiments/"
+export UTILS_DIR="${SRC_ROOT}/utils/"
 
 export PYTHONPATH=$SRC_ROOT
