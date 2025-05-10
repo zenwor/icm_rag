@@ -1,9 +1,6 @@
 # 🤖Intelligent chunking methods for code documentation RAG
 
-**ICM_RAG** is a general retrieval pipeline.
-
-Originally implemented as a part of JetBrains Internship Application Test Task.
-
+**ICM_RAG** is experimentation with retrieval pipeline, for general textual corpora retrieval task.
 
 ## 🏗 Implementation
 ### ℹ️ General
